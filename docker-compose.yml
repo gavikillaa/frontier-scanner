@@ -1,0 +1,27 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      # Persist data (SQLite database and cookies)
+      - ./data:/app/data
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+
+  # Optional: For initial login, run with display forwarding
+  # Use this only once to log in, then stop and use the regular app service
+  app-login:
+    build: .
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./data:/app/data
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      - NODE_ENV=production
+      - DISPLAY=${DISPLAY:-:0}
+    profiles:
+      - login
+    restart: "no"
